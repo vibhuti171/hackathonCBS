@@ -36,14 +36,10 @@ const ACCEPTED_IMAGE_TYPES = [
 const formSchema = z.object({
   image: z
     .any()
-    .refine((files) => files?.length == 1, 'Image is required.')
+    .optional()
     .refine(
-      (files) => files?.[0]?.size <= MAX_FILE_SIZE,
-      `Max file size is 5MB.`
-    )
-    .refine(
-      (files) => ACCEPTED_IMAGE_TYPES.includes(files?.[0]?.type),
-      '.jpg, .jpeg, .png and .webp files are accepted.'
+      (files) => !files || files.length === 0 || (files.length === 1 && files[0].size <= MAX_FILE_SIZE && ACCEPTED_IMAGE_TYPES.includes(files[0].type)),
+      'Invalid image file.'
     ),
   name: z.string().min(2, {
     message: 'Product name must be at least 2 characters.'
@@ -120,9 +116,9 @@ export default function ProductForm({
                 name="name"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Product Name</FormLabel>
+                    <FormLabel>Expense Name</FormLabel>
                     <FormControl>
-                      <Input placeholder="Enter product name" {...field} />
+                      <Input placeholder="Enter name of expense" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -148,9 +144,11 @@ export default function ProductForm({
                         <SelectItem value="electronics">Electronics</SelectItem>
                         <SelectItem value="clothing">Clothing</SelectItem>
                         <SelectItem value="home">Home & Garden</SelectItem>
+                        <SelectItem value="food">Food & Grocery</SelectItem>
                         <SelectItem value="sports">
                           Sports & Outdoors
                         </SelectItem>
+                        <SelectItem value="others">Others</SelectItem>
                       </SelectContent>
                     </Select>
                     <FormMessage />
@@ -162,11 +160,11 @@ export default function ProductForm({
                 name="price"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Price</FormLabel>
+                    <FormLabel>Price(in INR)</FormLabel>
                     <FormControl>
                       <Input
                         type="number"
-                        step="0.01"
+                        step="10"
                         placeholder="Enter price"
                         {...field}
                       />
@@ -193,7 +191,7 @@ export default function ProductForm({
                 </FormItem>
               )}
             />
-            <Button type="submit">Add Product</Button>
+            <Button type="submit">Add Expense</Button>
           </form>
         </Form>
       </CardContent>

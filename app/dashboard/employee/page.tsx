@@ -8,7 +8,7 @@ type pageProps = {
 };
 
 export const metadata = {
-  title: 'Dashboard : Employees'
+  title: 'Dashboard : Plan'
 };
 
 export default async function Page({ searchParams }: pageProps) {

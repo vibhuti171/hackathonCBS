@@ -61,7 +61,7 @@ export default function EmployeeForm() {
     <Card className="mx-auto w-full">
       <CardHeader>
         <CardTitle className="text-left text-2xl font-bold">
-          Employee Information
+          Plan Information
         </CardTitle>
       </CardHeader>
       <CardContent>
