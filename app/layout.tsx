@@ -6,6 +6,7 @@ import { Lato } from 'next/font/google';
 import NextTopLoader from 'nextjs-toploader';
 import './globals.css';
 
+
 export const metadata: Metadata = {
   title: 'Next Shadcn',
   description: 'Basic dashboard with Next.js and Shadcn'
@@ -23,6 +24,7 @@ export default async function RootLayout({
   children: React.ReactNode;
 }) {
   const session = await auth();
+  console.log(session);
   return (
     <html
       lang="en"

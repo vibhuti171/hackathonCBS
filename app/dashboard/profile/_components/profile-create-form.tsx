@@ -24,144 +24,147 @@ import {
   SelectValue
 } from '@/components/ui/select';
 import { Separator } from '@/components/ui/separator';
-import { profileSchema, type ProfileFormValues } from '@/lib/form-schema';
 import { cn } from '@/lib/utils';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { AlertTriangleIcon, Trash, Trash2Icon } from 'lucide-react';
-import { useParams, useRouter } from 'next/navigation';
+import { AlertTriangleIcon } from 'lucide-react';
+import { useRouter } from 'next/navigation';
 import { useState } from 'react';
-import { SubmitHandler, useFieldArray, useForm } from 'react-hook-form';
+import { useFieldArray, useForm } from 'react-hook-form';
 
-interface ProfileFormType {
-  initialData: any | null;
-  categories: any;
+interface FinanceFormValues {
+  // Personal Information
+  firstname: string;
+  lastname: string;
+  email: string;
+  age: number;
+  riskProfile: string;
+  monthlyIncome: number;
+  
+  // Financial Goals
+  financialGoals: {
+    goalType: string;
+    targetAmount: number;
+    timeframe: string;
+    priority: string;
+  }[];
+  
+  // Investment Preferences
+  investmentPreferences: {
+    assetClass: string;
+    allocationPercentage: number;
+  }[];
 }
-const ProfileCreateForm: React.FC<ProfileFormType> = ({
-  initialData,
-  categories
-}) => {
-  const params = useParams();
+
+const FinanceEntryForm = ({ initialData }: { initialData?: any }) => {
   const router = useRouter();
-  const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [imgLoading, setImgLoading] = useState(false);
-  const title = initialData ? 'Edit product' : 'Create Your Profile';
-  const description = initialData
-    ? 'Edit a product.'
-    : 'To create your resume, we first need some basic information about you.';
-  const toastMessage = initialData ? 'Product updated.' : 'Product created.';
-  const action = initialData ? 'Save changes' : 'Create';
-  const [previousStep, setPreviousStep] = useState(0);
   const [currentStep, setCurrentStep] = useState(0);
-  const [data, setData] = useState({});
-  const delta = currentStep - previousStep;
+  const [previousStep, setPreviousStep] = useState(0);
 
   const defaultValues = {
-    jobs: [
+    firstname: '',
+    lastname: '',
+    email: '',
+    age: 0,
+    riskProfile: '',
+    monthlyIncome: 0,
+    financialGoals: [
       {
-        jobtitle: '',
-        employer: '',
-        startdate: '',
-        enddate: '',
-        jobcountry: '',
-        jobcity: ''
+        goalType: '',
+        targetAmount: 0,
+        timeframe: '',
+        priority: ''
+      }
+    ],
+    investmentPreferences: [
+      {
+        assetClass: '',
+        allocationPercentage: 0
       }
     ]
   };
 
-  const form = useForm<ProfileFormValues>({
-    resolver: zodResolver(profileSchema),
+  const form = useForm<FinanceFormValues>({
     defaultValues,
     mode: 'onChange'
   });
 
-  const {
-    control,
-    formState: { errors }
-  } = form;
+  const { control } = form;
 
-  const { append, remove, fields } = useFieldArray({
+  const { fields: goalFields, append: appendGoal, remove: removeGoal } = useFieldArray({
     control,
-    name: 'jobs'
+    name: 'financialGoals'
   });
 
-  const onSubmit = async (data: ProfileFormValues) => {
-    try {
-      setLoading(true);
-      if (initialData) {
-        // await axios.post(`/api/products/edit-product/${initialData._id}`, data);
-      } else {
-        // const res = await axios.post(`/api/products/create-product`, data);
-        // console.log("product", res);
-      }
-      router.refresh();
-      router.push(`/dashboard/products`);
-    } catch (error: any) {
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const onDelete = async () => {
-    try {
-      setLoading(true);
-      //   await axios.delete(`/api/${params.storeId}/products/${params.productId}`);
-      router.refresh();
-      router.push(`/${params.storeId}/products`);
-    } catch (error: any) {
-    } finally {
-      setLoading(false);
-      setOpen(false);
-    }
-  };
-
-  const processForm: SubmitHandler<ProfileFormValues> = (data) => {
-    console.log('data ==>', data);
-    setData(data);
-    // api call and reset
-    // form.reset();
-  };
-
-  type FieldName = keyof ProfileFormValues;
+  const { fields: prefFields, append: appendPref, remove: removePref } = useFieldArray({
+    control,
+    name: 'investmentPreferences'
+  });
 
   const steps = [
     {
       id: 'Step 1',
-      name: 'Personal Information',
-      fields: ['firstname', 'lastname', 'email', 'contactno', 'country', 'city']
+      name: 'Basic Information',
+      fields: ['firstname', 'lastname', 'email', 'age', 'riskProfile', 'monthlyIncome']
     },
     {
       id: 'Step 2',
-      name: 'Professional Informations',
-      // fields are mapping and flattening for the error to be trigger  for the dynamic fields
-      fields: fields
-        ?.map((_, index) => [
-          `jobs.${index}.jobtitle`,
-          `jobs.${index}.employer`,
-          `jobs.${index}.startdate`,
-          `jobs.${index}.enddate`,
-          `jobs.${index}.jobcountry`,
-          `jobs.${index}.jobcity`
-          // Add other field names as needed
-        ])
-        .flat()
+      name: 'Financial Goals',
+      fields: goalFields.map((_, index) => [
+        `financialGoals.${index}.goalType`,
+        `financialGoals.${index}.targetAmount`,
+        `financialGoals.${index}.timeframe`,
+        `financialGoals.${index}.priority`
+      ]).flat()
     },
-    { id: 'Step 3', name: 'Complete' }
+    {
+      id: 'Step 3',
+      name: 'Investment Preferences',
+      fields: prefFields.map((_, index) => [
+        `investmentPreferences.${index}.assetClass`,
+        `investmentPreferences.${index}.allocationPercentage`
+      ]).flat()
+    }
+  ];
+
+  const riskProfiles = [
+    { id: '1', name: 'Conservative' },
+    { id: '2', name: 'Moderate' },
+    { id: '3', name: 'Aggressive' }
+  ];
+
+  const goalTypes = [
+    { id: '1', name: 'Retirement' },
+    { id: '2', name: 'Home Purchase' },
+    { id: '3', name: 'Education' },
+    { id: '4', name: 'Emergency Fund' }
+  ];
+
+  const assetClasses = [
+    { id: '1', name: 'Stocks' },
+    { id: '2', name: 'Bonds' },
+    { id: '3', name: 'Real Estate' },
+    { id: '4', name: 'Crypto' }
+  ];
+
+  const timeframes = [
+    { id: '1', name: '0-2 years' },
+    { id: '2', name: '2-5 years' },
+    { id: '3', name: '5-10 years' },
+    { id: '4', name: '10+ years' }
+  ];
+
+  const priorities = [
+    { id: '1', name: 'High' },
+    { id: '2', name: 'Medium' },
+    { id: '3', name: 'Low' }
   ];
 
   const next = async () => {
     const fields = steps[currentStep].fields;
-
-    const output = await form.trigger(fields as FieldName[], {
-      shouldFocus: true
-    });
-
+    const output = await form.trigger(fields as any[], { shouldFocus: true });
     if (!output) return;
 
     if (currentStep < steps.length - 1) {
-      if (currentStep === steps.length - 2) {
-        await form.handleSubmit(processForm)();
-      }
       setPreviousStep(currentStep);
       setCurrentStep((step) => step + 1);
     }
@@ -174,474 +177,448 @@ const ProfileCreateForm: React.FC<ProfileFormType> = ({
     }
   };
 
-  const countries = [{ id: 'wow', name: 'india' }];
-  const cities = [{ id: '2', name: 'kerala' }];
+  const onSubmit = async (data: FinanceFormValues) => {
+    try {
+      setLoading(true);
+      // Handle form submission here
+      console.log(data);
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <>
       <div className="flex items-center justify-between">
-        <Heading title={title} description={description} />
-        {initialData && (
-          <Button
-            disabled={loading}
-            variant="destructive"
-            size="sm"
-            onClick={() => setOpen(true)}
-          >
-            <Trash className="h-4 w-4" />
-          </Button>
-        )}
+        <Heading
+          title="Create Financial Profile"
+          description="Set up your financial profile and investment preferences"
+        />
       </div>
       <Separator />
-      <div>
+
+      {/* Progress Steps */}
+      <div className="mb-8">
         <ul className="flex gap-4">
           {steps.map((step, index) => (
             <li key={step.name} className="md:flex-1">
-              {currentStep > index ? (
-                <div className="group flex w-full flex-col border-l-4 border-sky-600 py-2 pl-4 transition-colors md:border-l-0 md:border-t-4 md:pb-0 md:pl-0 md:pt-4">
-                  <span className="text-sm font-medium text-sky-600 transition-colors ">
-                    {step.id}
-                  </span>
-                  <span className="text-sm font-medium">{step.name}</span>
-                </div>
-              ) : currentStep === index ? (
-                <div
-                  className="flex w-full flex-col border-l-4 border-sky-600 py-2 pl-4 md:border-l-0 md:border-t-4 md:pb-0 md:pl-0 md:pt-4"
-                  aria-current="step"
-                >
-                  <span className="text-sm font-medium text-sky-600">
-                    {step.id}
-                  </span>
-                  <span className="text-sm font-medium">{step.name}</span>
-                </div>
-              ) : (
-                <div className="group flex h-full w-full flex-col border-l-4 border-gray-200 py-2 pl-4 transition-colors md:border-l-0 md:border-t-4 md:pb-0 md:pl-0 md:pt-4">
-                  <span className="text-sm font-medium text-gray-500 transition-colors">
-                    {step.id}
-                  </span>
-                  <span className="text-sm font-medium">{step.name}</span>
-                </div>
-              )}
+              <div className={cn(
+                "group flex w-full flex-col border-l-4 py-2 pl-4 md:border-l-0 md:border-t-4 md:pb-0 md:pl-0 md:pt-4",
+                currentStep === index 
+                  ? "border-sky-600" 
+                  : currentStep > index 
+                    ? "border-green-600"
+                    : "border-gray-200"
+              )}>
+                <span className={cn(
+                  "text-sm font-medium",
+                  currentStep === index 
+                    ? "text-sky-600"
+                    : currentStep > index
+                      ? "text-green-600"
+                      : "text-gray-500"
+                )}>
+                  {step.id}
+                </span>
+                <span className="text-sm font-medium">{step.name}</span>
+              </div>
             </li>
           ))}
         </ul>
       </div>
-      <Separator />
+
       <Form {...form}>
-        <form
-          onSubmit={form.handleSubmit(processForm)}
-          className="w-full space-y-8"
-        >
-          <div
-            className={cn(
-              currentStep === 1
-                ? 'w-full md:inline-block'
-                : 'gap-8 md:grid md:grid-cols-3'
-            )}
-          >
-            {currentStep === 0 && (
-              <>
-                <FormField
-                  control={form.control}
-                  name="firstname"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>First Name</FormLabel>
+        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+          {currentStep === 0 && (
+            <div className="grid grid-cols-2 gap-8">
+              <FormField
+                control={form.control}
+                name="firstname"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>First Name</FormLabel>
+                    <FormControl>
+                      <Input disabled={loading} placeholder="John" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="lastname"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Last Name</FormLabel>
+                    <FormControl>
+                      <Input disabled={loading} placeholder="Doe" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="email"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Email</FormLabel>
+                    <FormControl>
+                      <Input disabled={loading} placeholder="john@example.com" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="age"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Age</FormLabel>
+                    <FormControl>
+                      <Input type="number" disabled={loading} {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="monthlyIncome"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Monthly Income</FormLabel>
+                    <FormControl>
+                      <Input type="number" disabled={loading} {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="riskProfile"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Risk Profile</FormLabel>
+                    <Select
+                      disabled={loading}
+                      onValueChange={field.onChange}
+                      value={field.value}
+                      defaultValue={field.value}
+                    >
                       <FormControl>
-                        <Input
-                          disabled={loading}
-                          placeholder="John"
-                          {...field}
-                        />
+                        <SelectTrigger>
+                          <SelectValue placeholder="Select risk profile" />
+                        </SelectTrigger>
                       </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={form.control}
-                  name="lastname"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Last Name</FormLabel>
-                      <FormControl>
-                        <Input
-                          disabled={loading}
-                          placeholder="Doe"
-                          {...field}
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={form.control}
-                  name="email"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Email</FormLabel>
-                      <FormControl>
-                        <Input
-                          disabled={loading}
-                          placeholder="johndoe@gmail.com"
-                          {...field}
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={form.control}
-                  name="contactno"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Contact Number</FormLabel>
-                      <FormControl>
-                        <Input
-                          type="number"
-                          placeholder="Enter you contact number"
-                          disabled={loading}
-                          {...field}
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={form.control}
-                  name="country"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Country</FormLabel>
-                      <Select
-                        disabled={loading}
-                        onValueChange={field.onChange}
-                        value={field.value}
-                        defaultValue={field.value}
-                      >
-                        <FormControl>
-                          <SelectTrigger>
-                            <SelectValue
-                              defaultValue={field.value}
-                              placeholder="Select a country"
-                            />
-                          </SelectTrigger>
-                        </FormControl>
-                        <SelectContent>
-                          {/* @ts-ignore  */}
-                          {countries.map((country) => (
-                            <SelectItem key={country.id} value={country.id}>
-                              {country.name}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={form.control}
-                  name="city"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>City</FormLabel>
-                      <Select
-                        disabled={loading}
-                        onValueChange={field.onChange}
-                        value={field.value}
-                        defaultValue={field.value}
-                      >
-                        <FormControl>
-                          <SelectTrigger>
-                            <SelectValue
-                              defaultValue={field.value}
-                              placeholder="Select a city"
-                            />
-                          </SelectTrigger>
-                        </FormControl>
-                        <SelectContent>
-                          {/* @ts-ignore  */}
-                          {cities.map((city) => (
-                            <SelectItem key={city.id} value={city.id}>
-                              {city.name}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              </>
-            )}
-            {currentStep === 1 && (
-              <>
-                {fields?.map((field, index) => (
-                  <Accordion
-                    type="single"
-                    collapsible
-                    defaultValue="item-1"
-                    key={field.id}
-                  >
-                    <AccordionItem value="item-1">
-                      <AccordionTrigger
-                        className={cn(
-                          'relative !no-underline [&[data-state=closed]>button]:hidden [&[data-state=open]>.alert]:hidden',
-                          errors?.jobs?.[index] && 'text-red-700'
-                        )}
-                      >
-                        {`Work Experience ${index + 1}`}
+                      <SelectContent>
+                        {riskProfiles.map((profile) => (
+                          <SelectItem key={profile.id} value={profile.id}>
+                            {profile.name}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
+          )}
 
-                        <Button
-                          variant="outline"
-                          size="icon"
-                          className="absolute right-8"
-                          onClick={() => remove(index)}
-                        >
-                          <Trash2Icon className="h-4 w-4 " />
-                        </Button>
-                        {errors?.jobs?.[index] && (
-                          <span className="alert absolute right-8">
-                            <AlertTriangleIcon className="h-4 w-4   text-red-700" />
-                          </span>
-                        )}
-                      </AccordionTrigger>
-                      <AccordionContent>
-                        <div
-                          className={cn(
-                            'relative mb-4 gap-8 rounded-md border p-4 md:grid md:grid-cols-3'
+          {currentStep === 1 && (
+            <div className="space-y-4">
+              {goalFields.map((field, index) => (
+                <Accordion
+                  type="single"
+                  collapsible
+                  defaultValue="item-1"
+                  key={field.id}
+                >
+                  <AccordionItem value="item-1">
+                    <AccordionTrigger className="text-left">
+                      Financial Goal {index + 1}
+                    </AccordionTrigger>
+                    <AccordionContent>
+                      <div className="grid grid-cols-2 gap-4 p-4">
+                        <FormField
+                          control={form.control}
+                          name={`financialGoals.${index}.goalType`}
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormLabel>Goal Type</FormLabel>
+                              <Select
+                                disabled={loading}
+                                onValueChange={field.onChange}
+                                value={field.value}
+                              >
+                                <FormControl>
+                                  <SelectTrigger>
+                                    <SelectValue placeholder="Select goal type" />
+                                  </SelectTrigger>
+                                </FormControl>
+                                <SelectContent>
+                                  {goalTypes.map((type) => (
+                                    <SelectItem key={type.id} value={type.id}>
+                                      {type.name}
+                                    </SelectItem>
+                                  ))}
+                                </SelectContent>
+                              </Select>
+                              <FormMessage />
+                            </FormItem>
                           )}
-                        >
-                          <FormField
-                            control={form.control}
-                            name={`jobs.${index}.jobtitle`}
-                            render={({ field }) => (
-                              <FormItem>
-                                <FormLabel>Job title</FormLabel>
+                        />
+                        <FormField
+                          control={form.control}
+                          name={`financialGoals.${index}.targetAmount`}
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormLabel>Target Amount</FormLabel>
+                              <FormControl>
+                                <Input type="number" disabled={loading} {...field} />
+                              </FormControl>
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
+                        <FormField
+                          control={form.control}
+                          name={`financialGoals.${index}.timeframe`}
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormLabel>Timeframe</FormLabel>
+                              <Select
+                                disabled={loading}
+                                onValueChange={field.onChange}
+                                value={field.value}
+                              >
                                 <FormControl>
-                                  <Input
-                                    type="text"
-                                    disabled={loading}
-                                    {...field}
-                                  />
+                                  <SelectTrigger>
+                                    <SelectValue placeholder="Select timeframe" />
+                                  </SelectTrigger>
                                 </FormControl>
-                                <FormMessage />
-                              </FormItem>
-                            )}
-                          />
-                          <FormField
-                            control={form.control}
-                            name={`jobs.${index}.employer`}
-                            render={({ field }) => (
-                              <FormItem>
-                                <FormLabel>Employer</FormLabel>
+                                <SelectContent>
+                                  {timeframes.map((timeframe) => (
+                                    <SelectItem key={timeframe.id} value={timeframe.id}>
+                                      {timeframe.name}
+                                    </SelectItem>
+                                  ))}
+                                </SelectContent>
+                              </Select>
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
+                        <FormField
+                          control={form.control}
+                          name={`financialGoals.${index}.priority`}
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormLabel>Priority</FormLabel>
+                              <Select
+                                disabled={loading}
+                                onValueChange={field.onChange}
+                                value={field.value}
+                              >
                                 <FormControl>
-                                  <Input
-                                    type="text"
-                                    disabled={loading}
-                                    {...field}
-                                  />
+                                  <SelectTrigger>
+                                    <SelectValue placeholder="Select priority" />
+                                  </SelectTrigger>
                                 </FormControl>
-                                <FormMessage />
-                              </FormItem>
-                            )}
-                          />
-                          <FormField
-                            control={form.control}
-                            name={`jobs.${index}.startdate`}
-                            render={({ field }) => (
-                              <FormItem>
-                                <FormLabel>Start date</FormLabel>
-                                <FormControl>
-                                  <Input
-                                    type="date"
-                                    disabled={loading}
-                                    {...field}
-                                  />
-                                </FormControl>
-                                <FormMessage />
-                              </FormItem>
-                            )}
-                          />
-                          <FormField
-                            control={form.control}
-                            name={`jobs.${index}.enddate`}
-                            render={({ field }) => (
-                              <FormItem>
-                                <FormLabel>End date</FormLabel>
-                                <FormControl>
-                                  <Input
-                                    type="date"
-                                    disabled={loading}
-                                    {...field}
-                                  />
-                                </FormControl>
-                                <FormMessage />
-                              </FormItem>
-                            )}
-                          />
-                          <FormField
-                            control={form.control}
-                            name={`jobs.${index}.jobcountry`}
-                            render={({ field }) => (
-                              <FormItem>
-                                <FormLabel>Job country</FormLabel>
-                                <Select
-                                  disabled={loading}
-                                  onValueChange={field.onChange}
-                                  value={field.value}
-                                  defaultValue={field.value}
-                                >
-                                  <FormControl>
-                                    <SelectTrigger>
-                                      <SelectValue
-                                        defaultValue={field.value}
-                                        placeholder="Select your job country"
-                                      />
-                                    </SelectTrigger>
-                                  </FormControl>
-                                  <SelectContent>
-                                    {countries.map((country) => (
-                                      <SelectItem
-                                        key={country.id}
-                                        value={country.id}
-                                      >
-                                        {country.name}
-                                      </SelectItem>
-                                    ))}
-                                  </SelectContent>
-                                </Select>
-                                <FormMessage />
-                              </FormItem>
-                            )}
-                          />
-                          <FormField
-                            control={form.control}
-                            name={`jobs.${index}.jobcity`}
-                            render={({ field }) => (
-                              <FormItem>
-                                <FormLabel>Job city</FormLabel>
-                                <Select
-                                  disabled={loading}
-                                  onValueChange={field.onChange}
-                                  value={field.value}
-                                  defaultValue={field.value}
-                                >
-                                  <FormControl>
-                                    <SelectTrigger>
-                                      <SelectValue
-                                        defaultValue={field.value}
-                                        placeholder="Select your job city"
-                                      />
-                                    </SelectTrigger>
-                                  </FormControl>
-                                  <SelectContent>
-                                    {cities.map((city) => (
-                                      <SelectItem key={city.id} value={city.id}>
-                                        {city.name}
-                                      </SelectItem>
-                                    ))}
-                                  </SelectContent>
-                                </Select>
-                                <FormMessage />
-                              </FormItem>
-                            )}
-                          />
-                        </div>
-                      </AccordionContent>
-                    </AccordionItem>
-                  </Accordion>
-                ))}
+                                <SelectContent>
+                                  {priorities.map((priority) => (
+                                    <SelectItem key={priority.id} value={priority.id}>
+                                      {priority.name}
+                                    </SelectItem>
+                                  ))}
+                                </SelectContent>
+                              </Select>
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
+                      </div>
+                      <Button
+                        type="button"
+                        variant="destructive"
+                        className="mt-2"
+                        onClick={() => removeGoal(index)}
+                      >
+                        Remove Goal
+                      </Button>
+                    </AccordionContent>
+                  </AccordionItem>
+                </Accordion>
+              ))}
+              <Button
+                type="button"
+                onClick={() => appendGoal({
+                  goalType: '',
+                  targetAmount: 0,
+                  timeframe: '',
+                  priority: ''
+                })}
+              >
+                Add Financial Goal
+              </Button>
+            </div>
+          )}
 
-                <div className="mt-4 flex justify-center">
+          {currentStep === 2 && (
+            <div className="space-y-4">
+              {prefFields.map((field, index) => (
+                <div key={field.id} className="grid grid-cols-2 gap-4 p-4 border rounded">
+                  <FormField
+                    control={form.control}
+                    name={`investmentPreferences.${index}.assetClass`}
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Asset Class</FormLabel>
+                        <Select
+                          disabled={loading}
+                          onValueChange={field.onChange}
+                          value={field.value}
+                        >
+                          <FormControl>
+                            <SelectTrigger>
+                              <SelectValue placeholder="Select asset class" />
+                            </SelectTrigger>
+                          </FormControl>
+                          <SelectContent>
+                            {assetClasses.map((asset) => (
+                              <SelectItem key={asset.id} value={asset.id}>
+                                {asset.name}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
+                    name={`investmentPreferences.${index}.allocationPercentage`}
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Allocation Percentage</FormLabel>
+                        <FormControl>
+                          <Input 
+                            type="number" 
+                            disabled={loading} 
+                            {...field}
+                            min="0"
+                            max="100"
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
                   <Button
                     type="button"
-                    className="flex justify-center"
-                    size={'lg'}
-                    onClick={() =>
-                      append({
-                        jobtitle: '',
-                        employer: '',
-                        startdate: '',
-                        enddate: '',
-                        jobcountry: '',
-                        jobcity: ''
-                      })
-                    }
+                    variant="destructive"
+                    onClick={() => removePref(index)}
+                    className="col-span-2"
                   >
-                    Add More
+                    Remove Asset Class
                   </Button>
                 </div>
-              </>
-            )}
-            {currentStep === 2 && (
-              <div>
-                <h1>Completed</h1>
-                <pre className="whitespace-pre-wrap">
-                  {JSON.stringify(data)}
-                </pre>
-              </div>
+              ))}
+              <Button
+                type="button"
+                onClick={() => appendPref({
+                  assetClass: '',
+                  allocationPercentage: 0
+                })}
+              >
+                Add Asset Class
+              </Button>
+            </div>
+          )}
+
+          {/* Navigation */}
+          <div className="flex justify-between pt-5">
+            <Button
+              type="button"
+              onClick={prev}
+              disabled={currentStep === 0}
+              variant="outline"
+              className="flex items-center gap-2"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                strokeWidth="1.5"
+                stroke="currentColor"
+                className="h-4 w-4"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M15.75 19.5L8.25 12l7.5-7.5"
+                />
+              </svg>
+              Previous
+            </Button>
+
+            {currentStep === steps.length - 1 ? (
+              <Button 
+                type="submit"
+                disabled={loading}
+                className="flex items-center gap-2"
+              >
+                Submit
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  strokeWidth="1.5"
+                  stroke="currentColor"
+                  className="h-4 w-4"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M4.5 12.75l6 6 9-13.5"
+                  />
+                </svg>
+              </Button>
+            ) : (
+              <Button
+                type="button"
+                onClick={next}
+                disabled={currentStep === steps.length - 1}
+                className="flex items-center gap-2"
+              >
+                Next
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  strokeWidth="1.5"
+                  stroke="currentColor"
+                  className="h-4 w-4"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M8.25 4.5l7.5 7.5-7.5 7.5"
+                  />
+                </svg>
+              </Button>
             )}
           </div>
-
-          {/* <Button disabled={loading} className="ml-auto" type="submit">
-            {action}
-          </Button> */}
         </form>
       </Form>
-      {/* Navigation */}
-      <div className="mt-8 pt-5">
-        <div className="flex justify-between">
-          <button
-            type="button"
-            onClick={prev}
-            disabled={currentStep === 0}
-            className="rounded bg-white px-2 py-1 text-sm font-semibold text-sky-900 shadow-sm ring-1 ring-inset ring-sky-300 hover:bg-sky-50 disabled:cursor-not-allowed disabled:opacity-50"
-          >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              fill="none"
-              viewBox="0 0 24 24"
-              strokeWidth="1.5"
-              stroke="currentColor"
-              className="h-6 w-6"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                d="M15.75 19.5L8.25 12l7.5-7.5"
-              />
-            </svg>
-          </button>
-          <button
-            type="button"
-            onClick={next}
-            disabled={currentStep === steps.length - 1}
-            className="rounded bg-white px-2 py-1 text-sm font-semibold text-sky-900 shadow-sm ring-1 ring-inset ring-sky-300 hover:bg-sky-50 disabled:cursor-not-allowed disabled:opacity-50"
-          >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              fill="none"
-              viewBox="0 0 24 24"
-              strokeWidth="1.5"
-              stroke="currentColor"
-              className="h-6 w-6"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                d="M8.25 4.5l7.5 7.5-7.5 7.5"
-              />
-            </svg>
-          </button>
-        </div>
-      </div>
     </>
   );
 };
 
-export default ProfileCreateForm;
+export default FinanceEntryForm;
