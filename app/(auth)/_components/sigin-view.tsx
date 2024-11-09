@@ -36,16 +36,21 @@ export default function SignInViewPage() {
           >
             <path d="M15 6v12a3 3 0 1 0 3-3H6a3 3 0 1 0 3 3V6a3 3 0 1 0-3 3h12a3 3 0 1 0-3-3" />
           </svg>
-          Logo
+          PathVest
         </div>
         <div className="relative z-20 mt-auto">
           <blockquote className="space-y-2">
-            <p className="text-lg">
-              &ldquo;This library has saved me countless hours of work and
-              helped me deliver stunning designs to my clients faster than ever
-              before.&rdquo;
-            </p>
-            <footer className="text-sm">Sofia Davis</footer>
+          
+        <div className="text-center space-y-4">
+          <h1 className="text-2xl font-semibold">Welcome Back to Pathvest</h1>
+          <p className="text-lg text-muted-foreground">
+           
+          </p>
+          <p className="text-sm text-muted-foreground">
+            Log in to access your personalized dashboard, tools, and resources to help
+            you make informed decisions and stay on top of your progress.
+          </p>
+        </div>
           </blockquote>
         </div>
       </div>
