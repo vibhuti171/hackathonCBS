@@ -13,7 +13,7 @@ import ProductListingPage from './_components/product-listing';
 import ProductTableAction from './_components/product-tables/product-table-action';
 
 export const metadata = {
-  title: 'Dashboard: Expenses'
+  title: 'Dashboard: Investements'
 };
 
 type pageProps = {
@@ -32,14 +32,14 @@ export default async function Page({ searchParams }: pageProps) {
       <div className="space-y-4">
         <div className="flex items-start justify-between">
           <Heading
-            title="Expenses"
-            description="Manage your Expenses"
+            title="Investements"
+            description="Manage your Investements"
           />
           <Link
             href="/dashboard/product/new"
             className={cn(buttonVariants(), 'text-xs md:text-sm')}
           >
-            <Plus className="mr-2 h-4 w-4" /> Add New Expense
+            <Plus className="mr-2 h-4 w-4" /> Add New Investement
           </Link>
         </div>
         <Separator />

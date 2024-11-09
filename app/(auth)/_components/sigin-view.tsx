@@ -42,6 +42,11 @@ export default function SignInViewPage() {
           <blockquote className="space-y-2">
           
         <div className="text-center space-y-4">
+          <img style={{borderRadius:".3rem",boxShadow: "rgba(100, 100, 111, 0.2) 0px 7px 29px 0px",marginBottom:"5rem"}} src="./dashbordPage.png"></img>
+          {/* <div style={{display:"flex",justifyContent: "center",alignItems:"center"}}> */}
+            {/* <img style={{borderRadius:".3rem",boxShadow: "rgba(100, 100, 111, 0.2) 0px 7px 29px 0px" ,width:"100%",marginBottom:"2rem"}} src="./barChart.png"></img>
+            <img style={{borderRadius:".3rem",boxShadow: "rgba(100, 100, 111, 0.2) 0px 7px 29px 0px", width:"100%",marginBottom:"2rem"}} src="./areaCurve.png"></img>
+          </div> */}
           <h1 className="text-2xl font-semibold">Welcome Back to Pathvest</h1>
           <p className="text-lg text-muted-foreground">
            
