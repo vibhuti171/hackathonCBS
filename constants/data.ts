@@ -130,14 +130,14 @@ export const navItems: NavItem[] = [
     items: [] // Empty array as there are no child items for Dashboard
   },
   {
-    title: 'Plan',
+    title: 'Income',
     url: '/dashboard/employee',
     icon: 'user',
     isActive: false,
     items: [] // No child items
   },
   {
-    title: 'Expenses',
+    title: 'Investements',
     url: '/dashboard/product',
     icon: 'product',
     isActive: false,
