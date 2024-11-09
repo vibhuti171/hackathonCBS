@@ -163,7 +163,7 @@ export const navItems: NavItem[] = [
     ]
   },
   {
-    title: 'Kanban',
+    title: 'Planning Board',
     url: '/dashboard/kanban',
     icon: 'kanban',
     isActive: false,
