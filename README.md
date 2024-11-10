@@ -1,65 +1,106 @@
-<picture>
-  <source media="(prefers-color-scheme: dark)" srcset="https://user-images.githubusercontent.com/9113740/201498864-2a900c64-d88f-4ed4-b5cf-770bcb57e1f5.png">
-  <source media="(prefers-color-scheme: light)" srcset="https://user-images.githubusercontent.com/9113740/201498152-b171abb8-9225-487a-821c-6ff49ee48579.png">
-</picture>
 
-<div align="center"><strong>Next.js 14 Admin Dashboard Starter Template With Shadcn-ui</strong></div>
-<div align="center">Built with the Next.js App Router</div>
-<br />
-<div align="center">
-<a href="https://next-shadcn-dashboard-starter.vercel.app">View Demo</a>
-<span>
-</div>
 
-## Overview
+# PathVest Web App
 
-This is a starter template using the following stack:
+PathVest is an innovative web application that provides personalized AI-powered investment insights and planning. The app enables users to ask investment-related questions and receive tailored answers from an AI chatbot. The platform also integrates a range of features, such as managing user profiles, monitoring income/expense, planning investments, and more.
 
-- Framework - [Next.js 14](https://nextjs.org/13)
-- Language - [TypeScript](https://www.typescriptlang.org)
-- Styling - [Tailwind CSS](https://tailwindcss.com)
-- Components - [Shadcn-ui](https://ui.shadcn.com)
-- Schema Validations - [Zod](https://zod.dev)
-- State Management - [Zustand](https://zustand-demo.pmnd.rs)
-- Search params state manager - [Nuqs](https://nuqs.47ng.com/)
-- Auth - [Auth.js](https://authjs.dev/)
-- Tables - [Tanstack Tables](https://ui.shadcn.com/docs/components/data-table)
-- Forms - [React Hook Form](https://ui.shadcn.com/docs/components/form)
-- Linting - [ESLint](https://eslint.org)
-- Pre-commit Hooks - [Husky](https://typicode.github.io/husky/)
-- Formatting - [Prettier](https://prettier.io)
+## Features
 
-_If you are looking for a React admin dashboard starter, here is the [repo](https://github.com/Kiranism/react-shadcn-dashboard-starter)._
+### 1. **AI Chatbot**
+   - **Ask PathVest AI Anything**: The AI chatbot allows users to ask a variety of investment-related questions, ranging from stock market basics to retirement planning.
+   - **Sample Questions**: 
+     - "What's the best way to start investing?"
+     - "How do I diversify my investment portfolio?"
+     - "What are the tax implications of selling investments?"
+   - **Interactive Placeholder Text**: Predefined placeholders guide users in formulating their questions to the AI chatbot.
 
-## Pages
+### 2. **User Profile Management**
+   - **Profile Details**: Users can manage their personal details, including their name, role, company, and email.
+   - **Profile Picture**: Users can upload and manage their profile pictures.
+   - **Login/Logout**: Users can log in and out of their accounts.
 
-| Pages                                                                                   | Specifications                                                                                                                      |
-| :-------------------------------------------------------------------------------------- | :---------------------------------------------------------------------------------------------------------------------------------- |
-| [Signup](https://next-shadcn-dashboard-starter.vercel.app/)                             | Authentication with **NextAuth** supports Social logins and email logins (Enter dummy email for demo).                              |
-| [Dashboard](https://next-shadcn-dashboard-starter.vercel.app/dashboard)                 | Cards with recharts graphs for analytics.                                                                                           |
-| [Employee](https://next-shadcn-dashboard-starter.vercel.app/dashboard/employee)         | Tanstack tables with server side searching, filter, pagination by Nuqs which is a Type-safe search params state manager in nextjs). |
-| [Employee/new](https://next-shadcn-dashboard-starter.vercel.app/dashboard/employee/new) | A Employee Form with shadcn form (react-hook-form + zod).                                                                           |
-| [Product](https://next-shadcn-dashboard-starter.vercel.app/dashboard/product)           | Tanstack tables with server side searching, filter, pagination by Nuqs which is a Type-safe search params state manager in nextjs   |
-| [Product/new](https://next-shadcn-dashboard-starter.vercel.app/dashboard/product/new)   | A Product Form with shadcn form (react-hook-form + zod).                                                                            |
-| [Profile](https://next-shadcn-dashboard-starter.vercel.app/dashboard/profile)           | Mutistep dynamic forms using react-hook-form and zod for form validation.                                                           |
-| [Kanban Board](https://next-shadcn-dashboard-starter.vercel.app/dashboard/kanban)       | A Drag n Drop task management board with dnd-kit and zustand to persist state locally.                                              |
-| [Not Found](https://next-shadcn-dashboard-starter.vercel.app/dashboard/notfound)        | Not Found Page Added in the root level                                                                                              |
-| -                                                                                       | -                                                                                                                                   |
+### 3. **Dashboard Navigation**
+   - **User-Friendly Navigation**: The dashboard is equipped with a sidebar containing the following sections:
+     - **Dashboard Overview**
+     - **Income**
+     - **Expense**
+     - **Investment**
+     - **Planning Board (Kanban)**
+     - **Account Settings**: Access user profile and login options.
+   - **Icons and Links**: Clear, well-designed icons and links to different sections for easy navigation.
 
-## Getting Started
+### 4. **Investment Planning**
+   - Users can explore various sections related to managing and planning their investments.
 
-Follow these steps to clone the repository and start the development server:
+### 5. **Dynamic Data Handling**
+   - The app integrates dynamic data handling for employees, products, and investments, allowing users to visualize and track their financial activities.
 
-- `git clone https://github.com/Kiranism/next-shadcn-dashboard-starter.git`
-- `npm install`
-- Create a `.env.local` file by copying the example environment file:
-  `cp env.example.txt .env.local`
-- Add the required environment variables to the `.env.local` file.
-- `npm run dev`
+## Technologies Used
 
-You should now be able to access the application at http://localhost:3000.
+- **Frontend**: 
+  - React.js with TypeScript
+  - Tailwind CSS for styling
+  - Prisma for data management
+  - MongoDB for storing user data
+- **Backend**: 
+  - API-driven approach
+  - AI chatbot powered by Groq API
 
-> [!WARNING]  
-> After cloning or forking the repository, be cautious when pulling or syncing with the latest changes, as this may result in breaking conflicts.
+## Project Structure
 
-Cheers! 🥂
+```
+/src
+  /components
+    /ui                -> UI components like placeholders and input fields
+  /types
+    -> TypeScript types for user, employee, and product data
+  /pages
+    -> Pages for dashboard, profile, and AI chatbot interactions
+  /lib
+    -> Functions for handling API requests and database queries
+  /assets
+    -> Static assets such as images and icons
+```
+
+## Installation
+
+### 1. Clone the repository
+
+```bash
+git clone https://github.com/your-repo/pathvest-webapp.git
+cd pathvest-webapp
+```
+
+### 2. Install dependencies
+
+```bash
+npm install
+```
+
+### 3. Set up environment variables
+
+Create a `.env` file in the root directory and add the following:
+
+```
+DATABASE_URL=your_mongodb_connection_string
+```
+
+### 4. Run the development server
+
+```bash
+npm run dev
+```
+
+The app will be available at `http://localhost:3000`.
+
+## Contribution
+
+1. Fork the repository.
+2. Create a new branch (`git checkout -b feature-branch`).
+3. Make your changes and commit (`git commit -am 'Add feature'`).
+4. Push to the branch (`git push origin feature-branch`).
+5. Create a pull request.
+
+
+
+
