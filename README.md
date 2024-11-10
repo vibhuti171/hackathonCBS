@@ -1,6 +1,4 @@
-Sure! Here's a suggested `README.md` for your web application based on the provided code and insights:
 
----
 
 # PathVest Web App
 
@@ -103,10 +101,6 @@ The app will be available at `http://localhost:3000`.
 4. Push to the branch (`git push origin feature-branch`).
 5. Create a pull request.
 
-## License
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
----
 
-Feel free to adjust the content based on the full features and specific implementation details of your app!
