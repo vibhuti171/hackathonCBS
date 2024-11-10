@@ -137,8 +137,15 @@ export const navItems: NavItem[] = [
     items: [] // No child items
   },
   {
-    title: 'Investements',
+    title: 'Investments',
     url: '/dashboard/product',
+    icon: 'product',
+    isActive: false,
+    items: [] // No child items
+  },
+  {
+    title: 'Expenses',
+    url: '/dashboard/expenses',
     icon: 'product',
     isActive: false,
     items: [] // No child items
