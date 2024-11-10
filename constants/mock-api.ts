@@ -38,14 +38,14 @@ export const fakeUsers = {
   initialize() {
     const sampleUsers: User[] = [];
     function generateRandomUserData(id: number): User {
-      const genders = ['male', 'female'];
+      const genders = ['Invested return', 'Fixed Income'];
       const jobs = [
-        'Software Engineer',
-        'Data Scientist',
-        'Marketing Manager',
-        'Graphic Designer',
-        'Sales Manager',
-        'Product Manager'
+        'Stock Market',
+        'Mutual Funds',
+        'Salary',
+        // 'Graphic Designer',
+        // 'Sales Manager',
+        // 'Product Manager'
       ];
       const cities = [
         'San Francisco',

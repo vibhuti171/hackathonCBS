@@ -38,8 +38,8 @@ export default function EmployeeTable({
           setPage={setPage}
         />
         <DataTableFilterBox
-          filterKey="gender"
-          title="Gender"
+          filterKey="Income"
+          title="Income"
           options={GENDER_OPTIONS}
           setFilterValue={setGenderFilter}
           filterValue={genderFilter}

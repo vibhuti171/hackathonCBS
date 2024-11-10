@@ -11,7 +11,7 @@ export type User = {
 export const users: User[] = [
   {
     id: 1,
-    name: 'Candice Schiner',
+    name: 'Stock Market',
     company: 'Dell',
     role: 'Frontend Developer',
     verified: false,
