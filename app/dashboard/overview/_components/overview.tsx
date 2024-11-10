@@ -1,3 +1,4 @@
+"use client"
 import { AreaGraph } from './area-graph';
 import { BarGraph } from './bar-graph';
 import { PieGraph } from './pie-graph';
@@ -10,21 +11,47 @@ import {
   CardContent,
   CardDescription,
   CardHeader,
-  CardTitle
+  CardTitle,
 } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import html2canvas from 'html2canvas';
+import jsPDF from 'jspdf';
 
 export default function OverViewPage() {
+  // Function to handle PDF download
+  const handleDownloadPDF = async () => {
+    const element = document.querySelector('#dashboard-content');
+
+    if (!element) return;
+
+    // Capture the dashboard content as a canvas
+    const canvas = await html2canvas(element as HTMLElement);
+    const imageData = canvas.toDataURL('image/png');
+
+    // Create a new jsPDF instance
+    const pdf = new jsPDF('p', 'mm', 'a4');
+    const pageWidth = pdf.internal.pageSize.getWidth();
+    const pageHeight = pdf.internal.pageSize.getHeight();
+
+    // Calculate the image dimensions to fit the PDF page
+    const imageWidth = pageWidth;
+    const imageHeight = (canvas.height * pageWidth) / canvas.width;
+
+    // Add the image to the PDF
+    pdf.addImage(imageData, 'PNG', 0, 0, imageWidth, imageHeight);
+
+    // Save the PDF
+    pdf.save('dashboard.pdf');
+  };
+
   return (
     <PageContainer scrollable>
-      <div className="space-y-2">
+      <div className="space-y-2" id="dashboard-content">
         <div className="flex items-center justify-between space-y-2">
-          <h2 className="text-2xl font-bold tracking-tight">
-            Hi, Welcome back 👋
-          </h2>
+          <h2 className="text-2xl font-bold tracking-tight">Hi, Welcome back 👋</h2>
           <div className="hidden items-center space-x-2 md:flex">
             <CalendarDateRangePicker />
-            <Button>Download</Button>
+            <Button onClick={handleDownloadPDF}>Download</Button>
           </div>
         </div>
         <Tabs defaultValue="overview" className="space-y-4">
@@ -38,103 +65,37 @@ export default function OverViewPage() {
             <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
               <Card>
                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                  <CardTitle className="text-sm font-medium">
-                    Net Worth
-                  </CardTitle>
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth="2"
-                    className="h-4 w-4 text-muted-foreground"
-                  >
-                    <path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" />
-                  </svg>
+                  <CardTitle className="text-sm font-medium">Net Worth</CardTitle>
                 </CardHeader>
                 <CardContent>
                   <div className="text-2xl font-bold">₹37,12,450</div>
-                  <p className="text-xs text-muted-foreground">
-                    +18.5% from last month
-                  </p>
+                  <p className="text-xs text-muted-foreground">+18.5% from last month</p>
                 </CardContent>
               </Card>
               <Card>
                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                  <CardTitle className="text-sm font-medium">
-                    Liquid Savings
-                  </CardTitle>
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth="2"
-                    className="h-4 w-4 text-muted-foreground"
-                  >
-                    <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
-                    <circle cx="9" cy="7" r="4" />
-                    <path d="M22 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75" />
-                  </svg>
+                  <CardTitle className="text-sm font-medium">Liquid Savings</CardTitle>
                 </CardHeader>
                 <CardContent>
                   <div className="text-2xl font-bold">₹1,540</div>
-                  <p className="text-xs text-muted-foreground">
-                    +155.3% from last month
-                  </p>
+                  <p className="text-xs text-muted-foreground">+155.3% from last month</p>
                 </CardContent>
               </Card>
               <Card>
                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                  <CardTitle className="text-sm font-medium">Investements</CardTitle>
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth="2"
-                    className="h-4 w-4 text-muted-foreground"
-                  >
-                    <rect width="20" height="14" x="2" y="5" rx="2" />
-                    <path d="M2 10h20" />
-                  </svg>
+                  <CardTitle className="text-sm font-medium">Investments</CardTitle>
                 </CardHeader>
                 <CardContent>
                   <div className="text-2xl font-bold">₹7,52,320</div>
-                  <p className="text-xs text-muted-foreground">
-                    +21% from last month
-                  </p>
+                  <p className="text-xs text-muted-foreground">+21% from last month</p>
                 </CardContent>
               </Card>
               <Card>
                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                  <CardTitle className="text-sm font-medium">
-                    Loan/EMI Per Month
-                  </CardTitle>
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth="2"
-                    className="h-4 w-4 text-muted-foreground"
-                  >
-                    <path d="M22 12h-4l-3 9L9 3l-3 9H2" />
-                  </svg>
+                  <CardTitle className="text-sm font-medium">Loan/EMI Per Month</CardTitle>
                 </CardHeader>
                 <CardContent>
                   <div className="text-2xl font-bold">₹8,012</div>
-                  <p className="text-xs text-muted-foreground">
-                    {/* +102 since last hour */}
-                  </p>
                 </CardContent>
               </Card>
             </div>
